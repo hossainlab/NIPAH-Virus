@@ -1,0 +1,122 @@
+---
+title: "Nipah Virus Transmission in Bangladesh"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: row
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(plotly)
+```
+
+```{r, colors, include=FALSE}
+cases_color <- "lightsteelblue"
+cfr_color <- "limegreen"
+death_color <- "red"
+```
+
+
+```{r, data}
+# Nipah virus cases 
+cases <- read.csv(here::here("data/NIPAH_Virus_Cases.csv"))
+
+# Death cases due to Nipah
+deaths <- read.csv(here::here("data/NIPAH_Virus_Deaths.csv"))
+
+# Join data 
+nipah_data <- left_join(cases, deaths, by = "Year")
+nipah_data$Year <- as.factor(nipah_data$Year)
+
+# CFR data 
+cfr_data <- read.csv(here::here("data/NIPAH_Virus_CFR.csv"))
+```
+
+
+Row 
+-----------------------------------------------------------------------
+### Cases {.value-box}
+
+```{r}
+cases <- format(sum(nipah_data$Cases, na.rm = T), big.mark = ",")
+valueBox(value = cases, 
+         caption = "Total Confirmed Cases", 
+         color = cases_color)
+```
+
+### Deaths {.value-box}
+
+```{r}
+death <- format(sum(nipah_data$Death, na.rm = T), big.mark = ",")
+valueBox(value = death, 
+         caption = "Total Confirmed Deaths", 
+         color = death_color)
+```
+
+
+### Maximum Case Fatality Rate (CFR) {.value-box}
+
+```{r}
+cfr <- format(max(round(cfr_data$YCFR, 2), na.rm = T), big.mark = ",")
+valueBox(value = cfr, 
+         caption = "Maximum Case Fatality Rate (CFR)", 
+         color = cfr_color)
+```
+
+Row 
+-----------------------------------------------------------------------
+### Nipah Virus Cases and Deaths 
+```{r, cases-death-trends}
+# Visualization 1: Nipah virus cases over the years
+plot_ly(data = nipah_data, x = ~Year)  |> 
+  add_trace(y = ~Cases, type = 'scatter', mode = 'lines+markers', name = "Cases") |> 
+  add_trace(y = ~Death, type = 'scatter', mode = 'lines+markers', name = "Deaths") |> 
+  layout(title = 'Nipah Virus Cases and Deaths Over the Years', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases and Deaths'))
+```
+
+
+### Number of Nipah Virus Cases in Bangladesh 
+```{r, number-of-cases}
+# Visualization 2: Number of Nipah Cases in Bangladesh 
+plot_ly(data = nipah_data, x = ~Year)  |> 
+  add_bars(y = ~Cases, name = 'Cases', text = ~Cases, 
+           textposition = 'auto', marker = list(color = "#665191")) |> 
+  layout(title = 'Number of Nipah Virus Cases', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
+```
+
+
+
+
+Row 
+-----------------------------------------------------------------------
+
+
+### Number of Death Cases due to Nipah Virus in Bangladesh 
+```{r, number-of-deaths}
+# Visualization 3: Number of Death Cases in Bangladesh 
+plot_ly(data = nipah_data, x = ~Year)  |> 
+  add_bars(y = ~Death, name = 'Deaths', text = ~Cases, 
+           textposition = 'auto', marker = list(color = "#d45087")) |> 
+  layout(title = 'Number of Death Cases', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Deaths'))
+```
+
+### Nipah Cases, Death and Year-wiese Case Fatality Rate(YCFR) in Bangladesh 
+```{r, cases-deaths-cfr}
+# Visualization 4: Number of Nipah Cases, Death and CFR in Bangladesh 
+plot_ly(data = cfr_data, x = ~Year)  |> 
+  add_bars(y = ~Cases, name = 'Cases') |> 
+  add_bars(y = ~Death, name = 'Death') |> 
+  add_trace(y = ~YCFR, type = 'scatter', mode = 'lines+markers', name = "YCFR") |> 
+  layout(title = 'Nipah Vrius Cases, Deaths, and Year-wise Case Fatality Rate(YCFR)', 
+         xaxis = list(title = 'Year'),
+         yaxis = list(title = 'Number of Cases'))
+```
+
