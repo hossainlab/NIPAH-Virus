@@ -13,9 +13,9 @@ library(plotly)
 ```
 
 ```{r, colors, include=FALSE}
-cases_color <- "lightsteelblue"
-cfr_color <- "limegreen"
-death_color <- "red"
+cases_color <- "#2980b9"
+death_color <- "#c0392b"
+cfr_color <- "#f1c40f"
 ```
 
 
@@ -94,8 +94,7 @@ plot_ly(data = nipah_data, x = ~Year)  |>
 
 
 Row 
------------------------------------------------------------------------
-
+-------------------------------------------------------------------
 
 ### Number of Death Cases due to Nipah Virus in Bangladesh 
 ```{r, number-of-deaths}
@@ -119,4 +118,3 @@ plot_ly(data = cfr_data, x = ~Year)  |>
          xaxis = list(title = 'Year'),
          yaxis = list(title = 'Number of Cases'))
 ```
-
