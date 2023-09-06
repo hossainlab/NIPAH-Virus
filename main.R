@@ -52,3 +52,7 @@ plot_ly(data = cfr_data, x = ~Year)  |>
          yaxis = list(title = 'Number of Cases'))
 
 
+
+
+
+
